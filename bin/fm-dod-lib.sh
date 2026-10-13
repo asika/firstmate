@@ -232,6 +232,23 @@ fm_ask_user_escalation_block() {  # <data-dir> <task-id>
 EOF
 }
 
+# Single owner of the own-reviewer (Copilot-quota-fallback reviewer) round format.
+# Every own-reviewer round, in every home, presents with the same shape. The
+# worker-facing wording and AGENTS.md point here rather than restating it; a
+# reviewer or worker reads this block to know what a round looks like.
+fm_own_reviewer_round_format() {
+  cat <<'EOF'
+# Own-reviewer round format contract
+Every own-reviewer round (the Copilot-quota-fallback reviewer) presents as a comment that starts with a one-line verdict briefing followed by a one-sentence overall comment:
+- Approval recommended when the reviewed head has no open Medium-or-above finding.
+- Change needed when an open Medium (or a Low worth fixing) exists.
+- Need a closer look when an open High exists or a point cannot be conclusively cleared.
+Findings are listed with a severity emoji prefix: red_circle for High, yellow_circle for Medium, large_blue_circle for Low, each formatted as emoji severity - file:line - issue - smallest remedy.
+Keep a `firstmate reviewer round - head <sha>` header line so the worker can match the round to its head.
+Unchanged semantics: only High/Medium keep the loop open, the emoji is presentation only, the PR stays draft until the captain makes it ready, the loop keeps its three-round cap, and Copilot reviews first with this round format as the quota fallback.
+EOF
+}
+
 fm_dod_block() {  # <mode> <task-id>
   local mode=$1 id=$2
   case "$mode" in
