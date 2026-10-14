@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 # Single owner of a ship task's mode-specific "Definition of done" block.
+# Also the documentation-only owner of the own-reviewer round format:
+# fm_own_reviewer_round_format states how every own-reviewer round presents and
+# has no runtime caller until a review-loop consumer lands - do not invent one.
 # Sourced by bin/fm-brief.sh, which renders it into a generated ship brief, and by
 # bin/fm-promote.sh, which renders it into the ship instructions a promoted scout
 # receives. Both paths must hand the worker the same contract: a promoted
@@ -229,6 +232,23 @@ fm_ask_user_escalation_block() {  # <data-dir> <task-id>
    For a no-mistakes ask-user gate specifically, escalate all ask-user findings as one event plus one snapshot file, using that same shape even when the gate holds only a single ask-user finding: write only the ask-user findings, verbatim and unparaphrased (id, severity, file, line, description, authority), to \`$data/$id/nm-<run>-findings.txt\`, then report the gate with
    \`needs-decision [key=nm-<run>-<step>]: ask-user findings=<id1>,<id2>,... file=$data/$id/nm-<run>-findings.txt\`
    naming every ask-user finding id from that gate. The status line only points at the file; it never restates or summarizes a finding's content.
+EOF
+}
+
+# Documentation-only owner of the own-reviewer (Copilot-quota-fallback reviewer)
+# round format: it states how every own-reviewer round presents, with no runtime
+# caller until a review-loop consumer lands. AGENTS.md section 7 points here
+# rather than restating the format.
+fm_own_reviewer_round_format() {
+  cat <<'EOF'
+# Own-reviewer round format contract
+Every own-reviewer round (the Copilot-quota-fallback reviewer) presents as a comment that starts with a one-line verdict briefing followed by a one-sentence overall comment:
+- Approval recommended when the reviewed head has no open Medium-or-above finding.
+- Change needed when an open Medium (or a Low worth fixing) exists.
+- Need a closer look when an open High exists or a point cannot be conclusively cleared.
+Findings are listed with a severity emoji prefix: red_circle for High, yellow_circle for Medium, large_blue_circle for Low, each formatted as emoji severity - file:line - issue - smallest remedy.
+Keep a `firstmate reviewer round - head <sha>` header line so the worker can match the round to its head.
+Only High/Medium findings keep the round open; the emoji is presentation only.
 EOF
 }
 
